@@ -10,6 +10,14 @@ const routes = [
     }
   },
   {
+    path: '/hot-activities',
+    name: 'Hot Activities',
+    component: () => import('@/views/Pages/HotActivities.vue'),
+    meta: {
+      layout: 'Default'
+    }
+  },
+  {
     path: '/summary',
     name: 'Summary',
     component: () => import('@/views/Scan/Summary.vue'),

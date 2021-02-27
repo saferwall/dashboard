@@ -5,13 +5,11 @@
 </template>
 
 <script>
-export default {
-    name : 'Content'
-}
+export default {}
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .app-content {
-    @apply mt-20 md:w-9/12 m-auto; 
+    @apply mt-20 md:w-9/12 m-auto;
 }
 </style>

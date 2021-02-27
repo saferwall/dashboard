@@ -13,7 +13,7 @@
 import Header from "@/components/partials/Header"
 import Footer from "@/components/partials/Footer"
 import Content from "@/components/partials/page/PageContent"
-import Sidebar from '@/components/partials/Sidebar.vue'
+import Sidebar from '@/components/partials/Sidebar'
 
 export default {
   name : 'SidebarLayout',

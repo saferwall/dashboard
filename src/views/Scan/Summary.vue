@@ -1,5 +1,5 @@
 <template>
-  <div class="summary">
+  <scan-content class="summary">
     <Card>
       <Progress />
     </Card>
@@ -31,7 +31,7 @@
     <Card title="Virtual Screen">
       <Gallery :images="[{ source: 'https://picsum.photos/800/350?i='+Math.random() } , { source: 'https://picsum.photos/800/350?i='+Math.random() } , { source: 'https://picsum.photos/800/350?i='+Math.random() } , { source: 'https://picsum.photos/800/350?i='+Math.random() } ,  { source: null } , { source : null } , { source: null } , { source : null }]"/>
     </Card>
-  </div>
+  </scan-content>
 </template>
 
 <script>
@@ -39,10 +39,11 @@ import Card from "@/components/shared/elements/Card.vue";
 import Progress from "@/components/shared/Progress.vue";
 import TableCols from "@/components/shared/tables/TableCols.vue";
 import Gallery from "@/components/shared/tables/Gallery.vue";
+import ScanContent from '../../components/partials/page/ScanContent.vue';
 
 export default {
   name: "Home",
-  components: { Card, Progress, TableCols, Gallery },
+  components: { Card, Progress, TableCols, Gallery, ScanContent },
 };
 </script>
 

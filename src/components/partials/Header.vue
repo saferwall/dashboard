@@ -31,7 +31,7 @@
       </div>
       <div class="menu">
         <div class="menu-content ">
-          <router-link to="#" class="btn-menu">
+          <router-link to="/hot-activities" class="btn-menu">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="mr-2"
