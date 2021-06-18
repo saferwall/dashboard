@@ -1,6 +1,6 @@
 <template>
 <div class="auth-card">
-    <form method="POST" class="w-full">
+    <form method="POST" class="w-full" @submit="formSubmited">
         <div class="header flex my-3">
             <svg class="mr-3" xmlns="http://www.w3.org/2000/svg" width="41.585" height="41.585" viewBox="0 0 41.585 41.585">
                 <g id="enter" transform="translate(0 0)">
@@ -17,11 +17,13 @@
             </h2>
         </div>
         <div class="content mt-8">
+            <template v-if="errors.length > 0">
+                <alert type="danger">{{ errors[0] }}</alert>
+            </template>
             <div class="form-group w-full my-4">
-                <input type="text" class="form-input" placeholder="Username">
+                <input autocomplete="login-username" v-model="username" type="text" class="form-input" placeholder="Username">
             </div>
-
-            <password placeholder="Password" />
+            <password v-model="password" placeholder="Password" :required="true" />
 
             <div class="form-group justify-between py-2">
                 <router-link to="/auth/confirmation">Didn’t confirm registration?</router-link>
@@ -41,9 +43,51 @@
 </template>
 
 <script>
+import {
+    authMethods
+} from '@/state/helpers';
+
 import Password from "@/common/components/elements/inputs/Password.vue"
+import Alert from '@/common/components/elements/Alert.vue'
 
 export default {
-  components: { Password },
+    components: {
+        Password,
+        Alert,
+    },
+    data() {
+        return {
+            username: null,
+            password: null,
+            errors: []
+        }
+    },
+    methods: {
+        ...authMethods,
+        formSubmited: function (e) {
+            e.preventDefault();
+
+            this.errors = [];
+            if (!this.username) this.errors.push("Username required.");
+            if (!this.password) this.errors.push("Password required.");
+            if (this.errors.length > 0) return true;
+
+            this.logIn({
+                    username: this.username,
+                    password: this.password,
+                }).then(() => {
+                    // Redirect to the originally requested page, or to the home page
+                    this.$router.push(
+                        this.$route.query.redirectFrom || {
+                            name: 'profile'
+                        }
+                    )
+                })
+                .catch((error) => {
+                    this.errors.push(error.response ? error.response.data.verbose_msg : 'Internal Server Error')
+                })
+
+        }
+    }
 }
 </script>

@@ -1,16 +1,16 @@
 <template>
 <div class="short-comment space-x-8">
     <div class="cmt-info">
-        <p class="cmt-content">
-            {{content}}
-        </p>
+        <div class="cmt-body">
+            {{ getContent }}
+        </div>
         <p class="cmt-date">
             {{getCommentedDate}}
         </p>
     </div>
     <div class="cmt-file w-full">
-        <router-link :to="`file/${hash}/summary`">
-            <hash-input :hash="hash" />
+        <router-link :to="`file/${sha256}/summary`">
+            <hash-input :hash="sha256" />
         </router-link>
     </div>
 </div>
@@ -26,25 +26,28 @@ export default {
         id: {
             type: String
         },
-        hash : {
+        sha256 : {
             type: String
         },
-        content: {
+        body: {
             type: String
         },
         followed: {
             default: false,
             type: Boolean
         },
-        created_at: {
+        timestamp: {
             type: [Date, String]
         }
     },
     computed : {
         getCommentedDate(){
-            return new Date(this.created_at).toDateString();
-        } 
-    }
+            return new Date(this.timestamp).toDateString();
+        },
+        getContent(){
+            return this.body.replace(/<\/?[^>]+>/ig, " "); 
+        }
+    },
 }
 </script>
 

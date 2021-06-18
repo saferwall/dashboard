@@ -21,13 +21,13 @@
 
 <style lang="scss" scoped>
 .btn-like{
-    @apply m-1 p-4 flex items-center text-primary font-bold stroke-primary fill-white; 
-
+    @apply m-1 p-4 flex items-center text-primary font-bold stroke-primary fill-white focus:outline-none;
+    
     svg{
         @apply mr-2;
     }
 
-    &.liked{
+    &:hover, &.liked{
         @apply fill-primary;
     }
 }

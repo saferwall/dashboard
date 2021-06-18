@@ -1,98 +1,104 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import store from '@/state/store'
+import NProgress from 'nprogress/nprogress'
+import middlewarePipeline from './middlewarePipeline'
 
-const publicRoutes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: () => import('@/modules/index/pages/Home.vue'),
-    meta: {
-      layout: 'Default',
-      menu: 'Member'
-    }
-  },
-  {
-    path: '/summary',
-    name: 'Summary',
-    component: () => import('@/modules/scan/pages/Summary.vue'),
-    meta: {
-      layout: 'SidebarLayout'
-    }
-  },
-  {
-    path: '/hot-activities',
-    name: 'Hot Activities',
-    component: () => import('@/modules/activities/pages/HotActivities.vue'),
-    meta: {
-      layout: 'HeaderLayout'
-    }
-  }
-]
+import { routes } from './routes'
+import { createRouter, createWebHistory } from 'vue-router'
 
-
-const authRoutes = [
-  {
-    path: '/auth/login',
-    name: 'Login',
-    component: () => import('@/modules/auth/pages/Login.vue'),
-    meta: {
-      layout: 'AuthLayout'
-    }
-  },
-  {
-    path: '/auth/register',
-    name: 'Register',
-    component: () => import('@/modules/auth/pages/Register.vue'),
-    meta: {
-      layout: 'AuthLayout'
-    }
-  },
-  {
-    path: '/auth/confirmation',
-    name: 'Confirmation',
-    component: () => import('@/modules/auth/pages/Confirmation.vue'),
-    meta: {
-      layout: 'AuthLayout'
-    }
-  },
-  {
-    path: '/auth/forgot-password',
-    name: 'Forgot Password',
-    component: () => import('@/modules/auth/pages/ForgotPassword.vue'),
-    meta: {
-      layout: 'AuthLayout'
-    }
-  }
-]
-
-
-const privateRoutes = [
-  {
-    path: '/profile',
-    name: 'Profile',
-    component: () => import('@/modules/profile/pages/Profile.vue'),
-    meta: {
-      layout: 'HeaderLayout'
-    }
-  },
-  {
-    path: '/account/settings',
-    name: 'Account Settings',
-    component: () => import('@/modules/account/pages/Settings.vue'),
-    meta: {
-      layout: 'HeaderLayout'
-    }
-  }
-]
-
-
-const routes = [...publicRoutes, ...privateRoutes, ...authRoutes].map(_route => {
-  return _route;
-});
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   base: process.env.BASE_URL,
-  routes
+  routes: routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { x: 0, y: 0 }
+    }
+  },
+
 })
+
+router.beforeEach((to, from, next) => {
+  if (!to.meta.middleware) {
+    return next()
+  }
+  const middleware = to.meta.middleware
+
+  const context = {
+    to,
+    from,
+    next,
+    store
+  }
+
+
+  return middleware[0]({
+    ...context,
+    next: middlewarePipeline(context, middleware, 1)
+  })
+
+})
+
+// Before each route evaluates...
+router.beforeEach((to, from) => {
+  // If this isn't an initial page load...
+  if (from.name !== null) {
+    // Start the route progress bar.
+    NProgress.start()
+  }
+})
+
+router.beforeResolve(async (to, from, next) => {
+  // Create a `beforeResolve` hook, which fires whenever
+  // `beforeRouteEnter` and `beforeRouteUpdate` would. This
+  // allows us to ensure data is fetched even when params change,
+  // but the resolved route does not. We put it in `meta` to
+  // indicate that it's a hook we created, rather than part of
+  // Vue Router (yet?).
+  try {
+    // For each matched route...
+    for (const route of to.matched) {
+      await new Promise((resolve, reject) => {
+        // If a `beforeResolve` hook is defined, call it with
+        // the same arguments as the `beforeEnter` hook.
+        if (route.meta && route.meta.beforeResolve) {
+          route.meta.beforeResolve(to, from, (...args) => {
+            // If the user chose to redirect...
+            if (args.length) {
+              // If redirecting to the same route we're coming from...
+              if (from.name === args[0].name) {
+                // Complete the animation of the route progress bar.
+                NProgress.done()
+              }
+              // Complete the redirect.
+              next(...args)
+              reject(new Error('Redirected'))
+            } else {
+              resolve()
+            }
+          })
+        } else {
+          // Otherwise, continue resolving the route.
+          resolve()
+        }
+      })
+    }
+    // If a `beforeResolve` hook chose to redirect, just return.
+  } catch (error) {
+    return
+  }
+
+  // If we reach this point, continue resolving the route.
+  next()
+})
+
+// When each route is finished evaluating...
+router.afterEach(() => {
+  // Complete the animation of the route progress bar.
+  NProgress.done()
+})
+
 
 export default router

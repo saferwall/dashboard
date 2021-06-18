@@ -19,4 +19,8 @@ body,html {
 body * {
     max-width: 100%;
 }
+
+#app{
+  min-height: 100%;
+}
 </style>

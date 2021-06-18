@@ -2,19 +2,19 @@
    <card-tab :active="active" class="tab-submissions" >
         <div v-if="rows.length == 0" class="empty-tab"><h2><slot name="emptymessage" /></h2></div>
         <template v-else>
-            <short-activity v-for="row in rows" :key="row.id" v-bind="row" />
+            <short-submission v-for="row in rows" :key="row.id" v-bind="row" />
         </template>
     </card-tab>
 </template>
 
 <script>
 import CardTab from '@/common/components/elements/CardTab.vue'
-import ShortActivity from '@/common/components/elements/activity/ShortActivity.vue'
+import ShortSubmission from '@/common/components/elements/activity/ShortSubmission.vue'
 
 export default {
     components: { 
         CardTab,
-        ShortActivity,
+        ShortSubmission,
     },
     props : {
         rows : {

@@ -1,7 +1,7 @@
 <template>
    <card-tab :active="active" class="tab-follow" >
         <div v-if="rows.length == 0" class="empty-tab"><h2><slot name="emptymessage" /></h2></div>
-        <template v-else>
+        <template  v-else>
             <short-follower v-for="row in rows" :key="row.id" v-bind="row" />
         </template>
     </card-tab>
@@ -31,5 +31,9 @@ export default {
 <style lang="scss" scoped>
 .tab-follow {
     @apply grid grid-cols-1 md:grid-cols-2 divide-gray divide-opacity-10;
+
+    .empty-tab{
+        @apply col-span-2;
+    }
 }
 </style>

@@ -2,19 +2,19 @@
     <footer >
         <div class="content grid grid-cols-3 gap-4 flex items-center ">
             <div class="copyright justify-start">
-                &copy; {{ app.copyright }} {{ app.name }}. All rights reserved.
+                &copy; {{ copyright }} {{ name }}. All rights reserved.
             </div>
             <div></div>
             <div class="media flex items-center justify-end">
-                <p>Developed with ❤ by {{ app.name }}.</p>
-                <a :href="app.media?.github" class="ml-2">
+                <p>Developed with ❤ by {{ name }}.</p>
+                <a :href="media?.github" class="ml-2">
                     <svg width="20" height="20">
-                        <image width="20" height="20" xlink:href="assets/icons/github.svg" />
+                        <image width="20" height="20" xlink:href="/assets/icons/github.svg" />
                     </svg>
                 </a>
-                <a :href="app.media?.twitter" class="ml-2">
+                <a :href="media?.twitter" class="ml-2">
                     <svg width="20" height="20">
-                        <image width="20" height="20" xlink:href="assets/icons/twitter.svg" />
+                        <image width="20" height="20" xlink:href="/assets/icons/twitter.svg" />
                     </svg>
                 </a>
             </div>
@@ -29,6 +29,16 @@ export default {
     name : 'Footer',
     computed: {
         ...mapGetters(['app'])
+    },
+    data(){
+        return {
+            name: 'Saferwall',
+            copyright: `2017-${new Date().getFullYear()}`,
+            media : {
+                github: 'https://github.com/saferwall',
+                twitter: 'https://twitter.com/saferwall',
+            },
+        }
     }
 }
 </script>

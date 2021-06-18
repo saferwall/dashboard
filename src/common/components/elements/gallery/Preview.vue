@@ -31,7 +31,7 @@ export default {
         }
     },
     emits: ['modalClose'],
-    setup(props, { emit }){
+    setup(_, { emit }){
 
         const closeModal = ()=>{
             emit('modalClose', true);

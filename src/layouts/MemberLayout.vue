@@ -1,26 +1,24 @@
 <template>
-<div>
-    <Header>
-      <Navbar />
-    </Header>
-    <Content>
-        <slot />
-    </Content>
-    <Footer />
-</div>
+    <base-layout>
+        <template v-slot:navbar>
+            <Navbar />
+        </template>
+        <template v-slot:main>
+            <Content>
+                <slot />
+            </Content>
+        </template>
+    </base-layout>
 </template>
 
+
 <script>
-import Header from "@/common/components/partials/Header.vue"
 import Navbar from "@/common/components/partials/Navbar.vue"
-import Footer from "@/common/components/partials/Footer.vue"
 import Content from "@/common/components/content/Content.vue"
 
 export default {
     components: {
-        Header,
         Navbar,
-        Footer,
         Content
     },
 }

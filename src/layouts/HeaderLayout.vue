@@ -1,27 +1,26 @@
 <template>
-<div>
-    <Header>
-        <Navbar />
-    </Header>
-    <Content class="content" :title="this.$route.name">
-        <slot />
-    </Content>
-    <Footer />
-</div>
+  <base-layout>
+      <template v-slot:navbar>
+          <Navbar />
+      </template>
+      <template v-slot:main>
+            <Content class="content" :title="title || this.$route.meta.title || this.$route.name">
+                <slot />
+            </Content>
+      </template>
+  </base-layout>
 </template>
 
 <script>
-import Header from "@/common/components/partials/Header.vue"
+import BaseLayout from '@/layouts/BaseLayout.vue'
 import Navbar from '@/common/components/partials/Navbar.vue'
-import Footer from "@/common/components/partials/Footer.vue"
 import Content from "@/common/components/content/HeaderContent.vue"
 
 export default {
     components: {
-        Header,
-        Footer,
         Content,
-        Navbar
+        Navbar,
+        BaseLayout
     },
     props: {
         title: String

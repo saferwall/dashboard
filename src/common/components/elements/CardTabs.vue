@@ -26,6 +26,7 @@ export default {
             default : 'horizontal'
         }
     },
+    emits: [ 'switchTab' ],
     data(){
         return {
             active : this.tabs[0]?.name || this.tabs[0]?.title || 'default'

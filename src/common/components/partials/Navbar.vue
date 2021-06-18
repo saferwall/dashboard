@@ -11,19 +11,26 @@
         </button>
     </div>
     <div class="menu">
-        <component :is="menu"></component>
+        <component :is="menu" :loggedIn="loggedIn"></component>
     </div>
 </template>
 
 <script>
-import MenuDefault from '@/common/components/menu/Default'
 import { shallowRef, watch } from 'vue'
 import { useRoute } from 'vue-router'
+
+import { authGetters } from "@/state/helpers";
 import Logo from "@/common/components/elements/Logo.vue";
+import MenuDefault from "@/common/components/menu/Default.vue";
+
+
 export default {
-    components: {
-        Logo
-    },
+  components: {
+      Logo
+  },
+  computed: {
+    ...authGetters
+  },
   setup() {
     const menu = shallowRef(MenuDefault);
     const route = useRoute();

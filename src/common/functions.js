@@ -1,3 +1,5 @@
+import { avgList } from '@/common/data/avg'
+
 /**
  * Get Time ago 
  * 
@@ -33,4 +35,35 @@ export function timeAgo(dateParam) {
         return 'Yesterday'
     } 
     return today.getFullYear();
+}
+
+/**
+ * Get time ago 
+ * Return only one of : (year||month||day||hour||minute||second)
+ * 
+ * @param {Number|String} dateParam 
+ * @returns {string}
+ */
+export function timeAgoCounts(dateParam) {
+    const time = typeof dateParam === 'number' ? dateParam : Date.parse(dateParam);
+    let seconds = Math.floor((Date.now() - time) / 1000);
+    let intervals = { 'year': 31536000 ,  'month': 2592000,  'day':86400, 'hours':3600 , 'minutes':60 , 'second':1 };
+    let interval = 0;
+    let intkey = Object.keys(intervals).find(_key=>{
+        interval = seconds / intervals[_key];
+        return interval > 1;
+    });
+
+    let fi = Math.floor(interval);
+    return `${fi} ${intkey}${fi === 1 ? '':'s'}`;
+}
+
+/**
+ * Check if name in the list of avg
+ * @param {String} name 
+ * @returns {Boolean}
+ */
+export  function isAnAVG(name)
+{
+    return avgList.find(avg=> avg.toLowerCase() === name.toLowerCase()) !== undefined;
 }

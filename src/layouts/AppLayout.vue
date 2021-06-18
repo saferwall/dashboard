@@ -18,6 +18,10 @@ export default {
     watch(
       () => route.meta,
       async (meta) => {
+        // tab title
+        document.title = meta.title || meta.name || 'Saferwall';
+
+        // layout
         try {
           const component = await import(`@/layouts/${meta.layout}.vue`)
           layout.value = component?.default || AppLayoutDefault

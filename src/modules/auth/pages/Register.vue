@@ -1,7 +1,7 @@
 <template>
 <div class="auth-card">
     <message v-if="sent" title="Confirm your registration" message="We’ve sent a link to the email you specified." button="Check my email" link="/login" />
-    <form v-else method="POST" class="w-full">
+    <form method="POST" class="w-full" @submit="formSubmited">
         <div class="header flex my-3">
             <svg class="mr-3" xmlns="http://www.w3.org/2000/svg" width="41.96" height="41.961" viewBox="0 0 41.96 41.961">
                 <g id="add-user" transform="translate(0)" style="isolation: isolate">
@@ -21,18 +21,21 @@
             </h2>
         </div>
         <div class="content mt-8">
+            <template v-if="errors.length > 0">
+                <alert type="danger">{{ errors[0] }}</alert>
+            </template>
             <div class="form-group w-full my-4">
-                <input type="text" class="form-input" placeholder="Username">
+                <input autocomplete="username" type="text" class="form-input" placeholder="Username" v-model="username">
             </div>
             <div class="form-group w-full my-4">
-                <input type="email" class="form-input" placeholder="Email">
+                <input autocomplete="email" type="email" class="form-input" placeholder="Email" v-model="email">
             </div>
 
-            <password placeholder="Password" />
+            <password placeholder="Password" v-model="password" />
 
             <div class="form-group justify-between py-2">
                 <label for="agree">
-                    <input type="checkbox" name="agree" id="agree"> I agree to the <router-link to="#">Terms of Service</router-link>
+                    <input type="checkbox" name="agree" id="agree"> I agree to the <a class="text-primary font-bold" target="_blank" href="https://about.saferwall.com/tos">Terms of Service</a>
                 </label>
             </div>
             <div class="form-group">
@@ -49,17 +52,52 @@
 </template>
 
 <script>
+import {
+    authMethods
+} from '@/state/helpers';
+
 import Password from "@/common/components/elements/inputs/Password.vue"
 import Message from '@/common/components/elements/Message.vue'
+import Alert from '@/common/components/elements/Alert.vue'
+
 export default {
     components: {
         Message,
+        Alert,
         Password
     },
     data() {
         return {
-            sent: false,
+            username: null,
+            password: null,
+            errors: [],
+            sent: false
         }
     },
+    methods: {
+        ...authMethods,
+        formSubmited: function (e) {
+            e.preventDefault();
+
+            this.errors = ['Username','Email','Password'].map(field => !this[field.toLowerCase()]  ? `${field} required.` : null).filter(x=>!!x);
+
+            if (this.errors.length > 0) return true;
+
+            this.register({
+                    username: this.username,
+                    email: this.email,
+                    password: this.password,
+                }).then(() => {
+                    this.username = null;
+                    this.password = null;
+                    this.email = null;
+                    this.sent = true;
+                })
+                .catch((error) => {
+                    this.errors.push(error.response ? error.response.data.verbose_msg : 'Internal Server Error')
+                })
+
+        }
+    }
 }
 </script>

@@ -1,24 +1,30 @@
 <template>
-<div class="short-follower space-x-8">
-    <div class="fuser-avatar">
-        <avatar />
+    <div class="short-follower space-x-8">
+        <div class="fuser-avatar">
+            <a :href="`/user/${username}`">
+                <avatar :username="username" />
+            </a>
+        </div>
+        <div class="fuser-info flex-grow">
+            <a :href="`/user/${username}`">
+                <h1 class="fuser-username">
+                    {{username}}
+                </h1>
+            </a>
+            <p class="fuser-resgistred">
+                Member since {{getRegistredTimeAgo}}
+            </p>
+        </div>
+        <div class="actions">
+            <btn-follow v-if="notSelfUser" :followed="dfollowed" v-on:toggleFollow="toggleFollow" />
+        </div>
     </div>
-    <div class="fuser-info flex-grow">
-        <h1 class="fuser-username">
-            {{username}}
-        </h1>
-        <p class="fuser-resgistred">
-            Member since {{getRegistredTimeAgo}}
-        </p>
-    </div>
-    <div class="actions">
-        <btn-follow :followed="followed"/>
-    </div>
-</div>
 </template>
 
 <script>
 import { timeAgo } from '@/common/functions';
+import { followActions, userGetters } from '@/state/helpers'
+
 import Avatar from "../Avatar.vue"
 import BtnFollow from '../button/BtnFollow.vue';
 
@@ -28,9 +34,6 @@ export default {
         BtnFollow,
     },
     props: {
-        id: {
-            type: String
-        },
         username: {
             type: String
         },
@@ -42,10 +45,37 @@ export default {
             type: [Date, String]
         }
     },
+    data(){
+        return {
+            dfollowed : false
+        }
+    },
     computed : {
+        ...userGetters,
         getRegistredTimeAgo(){
             return timeAgo(this.member_since);
-        } 
+        },
+        notSelfUser(){
+            return this.username !== this.getUser && this.getUser.username;
+        }
+    },
+    methods: {
+        ...followActions,
+        async toggleFollow(){
+            if (this.dfollowed) {
+                return this.doUnFollow({ id: this.username })
+                    .then(()=>{
+                        this.dfollowed = false;
+                    })
+            } 
+            this.doFollow({ id: this.username })
+                .then(()=>{
+                    this.dfollowed = true;
+                })
+        }
+    },
+    created(){
+        this.dfollowed = this.followed;
     }
 }
 </script>

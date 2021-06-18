@@ -1,23 +1,21 @@
 <template>
 <div class="latestactv my-9">
-    <list-activities :activities="activities" :more="true" />
+    <list-activities :activities="getActivities" :more="true" />
 </div>
 </template>
 
 <script>
-import { activity } from '@/common/data/data.test';
 import ListActivities from './ListActivities.vue';
 
 export default {
     components: {
         ListActivities
     },
-    data() {
-        return {
-            activities: activity({
-                examples : 10
-            })
-        }
+    props : {
+        activities: {
+            default: function(){ return []},
+            type:Array
+        },
     },
     computed: {
         latestActivities() {
